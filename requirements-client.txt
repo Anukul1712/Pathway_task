@@ -1,0 +1,5 @@
+# Client-side dependencies (install on Windows, NOT in Docker)
+requests>=2.31.0
+python-dotenv>=1.0.0
+langchain-google-genai>=0.0.12
+google-generativeai>=0.3.2
