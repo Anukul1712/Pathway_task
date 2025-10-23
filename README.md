@@ -2,7 +2,7 @@
 
 Real-time Retrieval-Augmented Generation system using Pathway in Docker for Windows users.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - Docker Desktop for Windows
@@ -27,8 +27,8 @@ Real-time Retrieval-Augmented Generation system using Pathway in Docker for Wind
    python test_client.py
 ```
 
-## 📊 Architecture
-## 🐳 Docker Commands
+##  Architecture
+##  Docker Commands
 ```cmd
 # Start server
 docker-compose up -d
@@ -43,19 +43,19 @@ docker-compose down
 docker-compose restart
 ```
 
-## 📡 API Endpoints
+##  API Endpoints
 
 - `POST http://localhost:8080/v1/retrieve` - Retrieve documents
 - `POST http://localhost:8080/v1/statistics` - Get statistics
 
-## 🔄 Real-time Updates
+##  Real-time Updates
 
 Add data to `data/balances.csv` and it's automatically indexed:
 ```cmd
 echo 11,"New financial metric..." >> data\balances.csv
 ```
 
-## 🐛 Troubleshooting
+##  Troubleshooting
 
 ### Server Not Responding
 ```cmd
@@ -69,12 +69,8 @@ netstat -ano | findstr :8080
 taskkill /PID <PID> /F
 ```
 
-## 📚 Resources
+##  Resources
 
 - [Pathway Docs](https://pathway.com/developers/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Gemini API](https://ai.google.dev/docs)
-
-## 📝 License
-
-MIT License
