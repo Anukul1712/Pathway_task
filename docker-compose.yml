@@ -14,16 +14,4 @@ services:
       - .env
     restart: unless-stopped
 
-  langchain-agent:
-    build: .
-    container_name: langchain_agent
-    command: python app/langchain_agent.py
-    depends_on:
-      - pathway-server
-    volumes:
-      - ./app:/app/app
-    env_file:
-      - .env
-    environment:
-      - PATHWAY_RETRIEVE_URL=http://pathway-server:8080/v1/retrieve
-    restart: unless-stopped
+
