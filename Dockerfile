@@ -14,6 +14,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
@@ -22,32 +23,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy app dependencies first (for Docker layer caching)
-COPY app/requirements.txt /app/requirements.txt
+# Copy requirements first for better caching
+COPY app/requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r /app/requirements.txt \
-    && pip install --no-cache-dir \
-        langchain \
-        langchain_google_genai \
-        google-generativeai \
-        requests \
-        python-dotenv
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy all application code
-COPY app/ /app/app/
-COPY data/ /app/data/
-COPY .env /app/.env
+# Copy application code
+COPY app/main.py .
 
-# Create data directory if not already there (for mounting)
+# Create data directory (will be mounted as volume)
 RUN mkdir -p /app/data
 
-# Expose the API port (for Pathway server)
+# Expose the API port
 EXPOSE 8080
 
-# Health check for the Pathway REST endpoint
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8080/v1/statistics || exit 1
 
-# Default command (can be overridden by docker-compose)
-CMD ["python", "-u", "app/main.py"]
+# Run the application
+CMD ["python", "-u", "main.py"]
