@@ -1,0 +1,21 @@
+# Core Pathway with ALL LLM xpack dependencies
+# This installs everything needed for document parsing and LLM operations
+pathway[xpack-llm-docs]>=0.8.0
+
+# Embedders
+sentence-transformers>=2.2.0
+torch>=2.0.0
+
+# LLM providers (if using Gemini)
+google-generativeai>=0.3.2
+langchain>=0.2.0
+langchain-google-genai>=0.0.12
+
+# Utilities
+python-dotenv>=1.0.0
+pandas>=2.0.0
+requests>=2.31.0
+colorlog>=6.7.0
+
+# Additional system utilities for Windows compatibility
+python-magic-bin>=0.4.14; sys_platform == 'win32'
