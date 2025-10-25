@@ -10,12 +10,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Validate API key
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY not found in environment variables")
-
-logger.info("Gemini API key loaded")
+logger.info("Starting Pathway Vector Store Server")
 
 # Define schema
 class BalanceSchema(pw.Schema):
@@ -32,12 +27,11 @@ data_source = pw.io.csv.read(
 )
 
 # Step 2: Prepare documents with correct schema for VectorStoreServer
-# VectorStoreServer expects 'data' column, not 'text'
 documents = data_source.select(
-    data=pw.this.description,  # Changed from 'text' to 'data'
+    data=pw.this.description,
 )
 
-logger.info(f"Documents configured: {documents}")
+logger.info(f"Documents configured")
 
 # Step 3: Configure embeddings
 logger.info("Loading sentence-transformers embedding model...")
@@ -70,6 +64,6 @@ logger.info("Server is ready to accept requests!")
 vector_store.run_server(
     host=host, 
     port=port, 
-    with_cache=False,  # Disabled cache for simplicity
+    with_cache=False,
     cache_backend=None
 )
