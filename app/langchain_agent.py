@@ -13,7 +13,7 @@ PATHWAY_RETRIEVE_URL = os.getenv("PATHWAY_RETRIEVE_URL", "http://localhost:8080/
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:8b")  # You can use "llama3.1:8b"
 
-print(f"🔧 Configuration:")
+print(f" Configuration:")
 print(f"   Pathway URL: {PATHWAY_RETRIEVE_URL}")
 print(f"   Ollama URL:  {OLLAMA_BASE_URL}")
 print(f"   Ollama Model:{OLLAMA_MODEL}")
@@ -24,43 +24,43 @@ print(f"   Ollama Model:{OLLAMA_MODEL}")
 # ==========================
 def wait_for_pathway(max_retries=30, delay=2):
     """Wait for Pathway server to be ready"""
-    print("⏳ Waiting for Pathway server to be ready...")
+    print(" Waiting for Pathway server to be ready...")
     for i in range(max_retries):
         try:
             response = requests.get(PATHWAY_RETRIEVE_URL.replace("/v1/retrieve", "/v1/statistics"))
             if response.status_code == 200:
-                print("✅ Pathway server is ready!")
+                print(" Pathway server is ready!")
                 return True
         except requests.exceptions.RequestException:
             pass
         print(f"   Attempt {i+1}/{max_retries}...")
         time.sleep(delay)
-    print("❌ Pathway server failed to start.")
+    print(" Pathway server failed to start.")
     return False
 
 
 def wait_for_ollama(max_retries=10, delay=2):
     """Wait for Ollama to be ready"""
-    print("⏳ Checking Ollama connection...")
+    print(" Checking Ollama connection...")
     for i in range(max_retries):
         try:
             response = requests.get(f"{OLLAMA_BASE_URL}/api/tags")
             if response.status_code == 200:
                 models = response.json().get("models", [])
                 model_names = [m["name"] for m in models]
-                print(f"✅ Ollama is ready! Available models: {model_names}")
+                print(f" Ollama is ready! Available models: {model_names}")
 
                 if any(OLLAMA_MODEL in name for name in model_names):
-                    print(f"✅ Model {OLLAMA_MODEL} is available!")
+                    print(f" Model {OLLAMA_MODEL} is available!")
                 else:
-                    print(f"⚠️ Model {OLLAMA_MODEL} not found. Please pull it:")
+                    print(f" Model {OLLAMA_MODEL} not found. Please pull it:")
                     print(f"   ollama pull {OLLAMA_MODEL}")
                 return True
         except requests.exceptions.RequestException as e:
             print(f"   Connection failed: {e}")
         print(f"   Attempt {i+1}/{max_retries}...")
         time.sleep(delay)
-    print("❌ Cannot connect to Ollama. Make sure it's running on your host machine.")
+    print(" Cannot connect to Ollama. Make sure it's running on your host machine.")
     print("   Start Ollama: ollama serve")
     return False
 
@@ -81,18 +81,18 @@ def pathway_retrieve(query: str) -> str:
         if " and " in clean_query.lower():
             clean_query = clean_query.split(" and ")[0].strip()
 
-        print(f"\n🔍 Searching Pathway for: '{clean_query}'")
+        print(f"\n Searching Pathway for: '{clean_query}'")
         payload = {"query": clean_query, "k": 5}
-        print(f"📤 Request payload: {payload}")
+        print(f" Request payload: {payload}")
 
         response = requests.post(PATHWAY_RETRIEVE_URL, json=payload)
-        print(f"📥 Response status: {response.status_code}")
+        print(f" Response status: {response.status_code}")
 
         if response.status_code == 200:
             data = response.json()
             docs = [d.get("text", "") for d in data]
             result = "\n\n".join(docs)
-            print(f"✅ Found {len(docs)} documents")
+            print(f" Found {len(docs)} documents")
             return result if result else "No relevant documents found."
         else:
             return f"Error retrieving from Pathway: {response.text}"
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     if not wait_for_ollama():
         exit(1)
 
-    print("\n🤖 Initializing Ollama LLM...")
+    print("\n Initializing Ollama LLM...")
     try:
         llm = Ollama(
             model=OLLAMA_MODEL,
@@ -149,9 +149,9 @@ if __name__ == "__main__":
             temperature=0,
             system="You are a helpful financial data assistant. You analyze company balance information from a database. This is business data analysis, not personal information."
         )
-        print("✅ Ollama LLM initialized")
+        print(" Ollama LLM initialized")
     except Exception as e:
-        print(f"❌ Failed to initialize Ollama: {e}")
+        print(f" Failed to initialize Ollama: {e}")
         exit(1)
 
     print("\n🔧 Creating agent with Pathway retrieval tool...")
@@ -167,18 +167,18 @@ if __name__ == "__main__":
             max_iterations=4,
             return_intermediate_steps=True
         )
-        print("✅ Agent created successfully")
+        print(" Agent created successfully")
     except Exception as e:
-        print(f"❌ Failed to create agent: {e}")
+        print(f" Failed to create agent: {e}")
         exit(1)
 
     # ==========================
     # INTERACTIVE QUERY MODE
     # ==========================
     print("\n" + "=" * 80)
-    print("🚀 INTERACTIVE QUERY MODE")
+    print(" INTERACTIVE QUERY MODE")
     print("=" * 80)
-    print("\n💡 You can now ask questions about your data!")
+    print("\n You can now ask questions about your data!")
     print("Examples:")
     print("  - What is the balance of Company ABC?")
     print("  - Which company has the highest balance?")
@@ -188,13 +188,13 @@ if __name__ == "__main__":
 
     while True:
         try:
-            query = input("❓ Your question: ").strip()
+            query = input(" Your question: ").strip()
             if query.lower() in ["exit", "quit", "q", ""]:
-                print("\n👋 Goodbye! Thanks for using the agent.")
+                print("\n Goodbye! Thanks for using the agent.")
                 break
 
             print(f"\n{'='*80}")
-            print(f"📝 Query: {query}")
+            print(f" Query: {query}")
             print(f"{'='*80}")
 
             try:
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                 output = result.get("output", "No output")
 
                 if output == "Agent stopped due to iteration limit or time limit.":
-                    print("\n⚠️ Agent reached iteration limit. Extracting last retrieved info...")
+                    print("\n Agent reached iteration limit. Extracting last retrieved info...")
                     steps = result.get("intermediate_steps", [])
                     if steps:
                         last_observation = steps[-1][1] if len(steps) > 0 else ""
@@ -210,15 +210,16 @@ if __name__ == "__main__":
                             print(f"\n📄 Retrieved Information:\n{last_observation[:500]}...")
                             print("\n💡 Suggested Answer: Based on the retrieved data above.")
                 else:
-                    print(f"\n✅ Answer: {output}")
+                    print(f"\n Answer: {output}")
 
             except Exception as e:
-                print(f"\n❌ Error processing query: {e}")
+                print(f"\n Error processing query: {e}")
 
             print(f"{'='*80}\n")
 
         except KeyboardInterrupt:
-            print("\n🛑 Interrupted by user. Exiting...")
+            print("\n Interrupted by user. Exiting...")
             break
 
     print("\n✅ All queries completed!")
+
