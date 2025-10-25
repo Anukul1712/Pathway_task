@@ -1,5 +1,5 @@
 # ==========================
-# PATHWAY RAG System - Docker
+# PATHWAY RAG System - Docker (Ollama Edition)
 # ==========================
 
 FROM python:3.10-slim
@@ -14,26 +14,30 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 # Install system dependencies
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
     git \
-    poppler-utils \
-    tesseract-ocr \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
-COPY app/requirements.txt .
+COPY requirements.txt /app/requirements.txt
 
+# Disable pip cache
+ENV PIP_NO_CACHE_DIR=1
+
+# Install Python dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+    
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app/main.py .
+# Create app directory structure
+RUN mkdir -p /app/app /app/data
 
-# Create data directory (will be mounted as volume)
-RUN mkdir -p /app/data
+# Copy application code
+COPY app/ /app/app/
 
 # Expose the API port
 EXPOSE 8080
@@ -42,5 +46,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8080/v1/statistics || exit 1
 
-# Run the application
-CMD ["python", "-u", "main.py"]
+# Default command (can be overridden in docker-compose)
+CMD ["python", "-u", "app/main.py"]
