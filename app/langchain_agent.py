@@ -154,7 +154,7 @@ if __name__ == "__main__":
         print(f" Failed to initialize Ollama: {e}")
         exit(1)
 
-    print("\n🔧 Creating agent with Pathway retrieval tool...")
+    print("\n Creating agent with Pathway retrieval tool...")
     try:
         prompt = PromptTemplate.from_template(REACT_PROMPT)
         tools = [pathway_retrieve]
@@ -207,8 +207,8 @@ if __name__ == "__main__":
                     if steps:
                         last_observation = steps[-1][1] if len(steps) > 0 else ""
                         if last_observation:
-                            print(f"\n📄 Retrieved Information:\n{last_observation[:500]}...")
-                            print("\n💡 Suggested Answer: Based on the retrieved data above.")
+                            print(f"\n Retrieved Information:\n{last_observation[:500]}...")
+                            print("\n Suggested Answer: Based on the retrieved data above.")
                 else:
                     print(f"\n Answer: {output}")
 
@@ -221,5 +221,6 @@ if __name__ == "__main__":
             print("\n Interrupted by user. Exiting...")
             break
 
-    print("\n✅ All queries completed!")
+    print("\n All queries completed!")
+
 
