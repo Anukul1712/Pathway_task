@@ -65,8 +65,8 @@ Pathway_task/
 # Install Ollama (if not already installed)
 # Visit: https://ollama.ai/download
 
-# Pull the Llama 3.1 model
-ollama pull llama3.1:8b
+# Pull the qwen 2.5 model
+ollama pull qwen2.5:1.5b
 
 # Start Ollama server (if not running)
 ollama serve
